@@ -1,6 +1,7 @@
 from conversation import Conversation
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
+from googleapiclient.errors import HttpError
 from bs4 import BeautifulSoup
 from docx import Document
 from email.mime.multipart import MIMEMultipart
@@ -55,6 +56,10 @@ class EmailSender:
             message = (service.users().messages().send(userId=user_id, body=message).execute())
             print('Message Id: %s' % message['id'])
             return message
+        except HttpError as error: 
+            print(f'An Http error occorred: {error.resp.status}')
+            print(error.content.decode())
+            return None
         except Exception as e:
             print('An error occurred: %s' % e)
             return None
